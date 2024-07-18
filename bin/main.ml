@@ -16,6 +16,8 @@ let print_help () =
         "    show               - Show TODO list";
         "    add <note:str>     - Add note to TODO list";
         "    remove <index:int> - Remove note at index <index> from TODO list";
+        "    save <path:str>    - Persist the TODO list in the filesystem";
+        "    load <path:str>    - Load a TODO list from the filesystem at path";
         "    quit               - Quit the program";
       ]
       ~f:Stdio.print_endline
@@ -34,6 +36,16 @@ let add_todo todo note = note :: todo
 
 (* Remove from todo list by index *)
 let remove_todo todo n = List.filteri todo ~f:(fun i _ -> not (equal_int i n))
+
+(* Save todo to a file *)
+let save_todo todo path =
+  let oc = Out_channel.open_text path in
+  List.map todo ~f:(Stdio.Out_channel.fprintf oc "%s\n") |> ignore;
+  Stdio.Out_channel.close_no_err oc;
+  ()
+
+(* Load todo from a file *)
+let load_todo path = Stdio.In_channel.read_lines path ~fix_win_eol:true
 
 (* Main *)
 let () =
@@ -68,6 +80,16 @@ let () =
             todo := remove_todo !todo i;
             Stdio.printf "Entry %i removed\n" i
         | _ -> Stdio.print_endline "Usage: remove <index:int>")
+    | [ "save"; s ] -> (
+        try
+          save_todo !todo s;
+          Stdio.printf "Saved todo at %s\n" s
+        with e -> Exn.to_string e |> Stdio.printf "Error: %s\n")
+    | [ "load"; s ] -> (
+        try
+          todo := load_todo s;
+          Stdio.printf "Loaded todo from %s\n" s
+        with e -> Exn.to_string e |> Stdio.printf "Error: %s\n")
     | [ "quit" ] | [ "q" ] ->
         Stdio.print_endline "Goodbye!";
         Stdlib.exit Exit_codes.success
