@@ -1,0 +1,4 @@
+(executable
+ (public_name hellocaml)
+ (name main)
+ (libraries hellocaml base stdio))
