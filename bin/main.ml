@@ -9,20 +9,18 @@ end
 (* Print usage help *)
 let print_help () =
   Stdio.print_endline "Commands and usage:";
-  let _ =
-    List.map
-      [
-        "    help               - Display this output";
-        "    show               - Show TODO list";
-        "    add <note:str>     - Add note to TODO list";
-        "    remove <index:int> - Remove note at index <index> from TODO list";
-        "    save <path:str>    - Persist the TODO list in the filesystem";
-        "    load <path:str>    - Load a TODO list from the filesystem at path";
-        "    quit               - Quit the program";
-      ]
-      ~f:Stdio.print_endline
-  in
-  ()
+  List.map
+    [
+      "    help               - Display this output";
+      "    show               - Show TODO list";
+      "    add <note:str>     - Add note to TODO list";
+      "    remove <index:int> - Remove note at index <index> from TODO list";
+      "    save <path:str>    - Persist the TODO list in the filesystem";
+      "    load <path:str>    - Load a TODO list from the filesystem at path";
+      "    quit               - Quit the program";
+    ]
+    ~f:Stdio.print_endline
+  |> ignore
 
 (* Display todo list *)
 let show_todo todo =
